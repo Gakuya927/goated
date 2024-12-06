@@ -111,4 +111,6 @@ function updateLogsTable(temperature, humidity, state) {
     // Append the new row to the table
     tableBody.appendChild(row);
 }
+// Fetch temperature data every 5 seconds
+setInterval(getTemperatureData, 5000);
 
