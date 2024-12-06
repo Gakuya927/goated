@@ -1,5 +1,11 @@
 // Track incubator state
 let incubatorRunning = false;
+let temperatureData = [];
+let humidityData = [];
+let timeLabels = [];
+
+// Create a chart instance
+let tempHumidityChart;
 
 // Set up event listeners for Start and Stop buttons
 function setupButtonControls() {
@@ -67,6 +73,46 @@ function addLogEntry(tableBody, timestamp, temperature, humidity, state) {
     tableBody.prepend(row); // Add the new entry at the top
 }
 
+// Function to initialize the chart
+function initializeChart() {
+    const ctx = document.getElementById('temperatureChart').getContext('2d');
+    
+    // Create the chart instance
+    tempHumidityChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: timeLabels,
+            datasets: [
+                {
+                    label: 'Temperature (°C)',
+                    data: temperatureData,
+                    borderColor: 'rgb(255, 99, 132)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    fill: false,
+                    tension: 0.1
+                },
+                {
+                    label: 'Humidity (%)',
+                    data: humidityData,
+                    borderColor: 'rgb(54, 162, 235)',
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    fill: false,
+                    tension: 0.1
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    type: 'linear',
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+}
+
 // Periodically update logs with temperature and humidity data
 function startPeriodicUpdates(interval = 5000) {
     const logTableBody = document.getElementById('log-table-body');
@@ -89,6 +135,15 @@ function startPeriodicUpdates(interval = 5000) {
             } else {
                 addLogEntry(logTableBody, now, temperature, humidity, 'Stopped');
             }
+
+            // Update the chart data
+            timeLabels.push(timeLabels.length + 1); // Add new timestamp for x-axis
+            temperatureData.push(temperature); // Add new temperature value
+            humidityData.push(humidity); // Add new humidity value
+
+            // Update chart with new data
+            tempHumidityChart.update();
+
         } catch (error) {
             console.error("Error fetching temperature and humidity data:", error);
         }
@@ -98,5 +153,6 @@ function startPeriodicUpdates(interval = 5000) {
 // Call setup functions when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', () => {
     setupButtonControls();  // Set up event listeners for Start/Stop buttons
+    initializeChart();  // Initialize the chart
     startPeriodicUpdates();  // Start the periodic update of temperature/humidity
 });
