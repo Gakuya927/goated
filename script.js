@@ -9,6 +9,11 @@ function setupButtonControls() {
     const statusMessage = document.getElementById('status-message');
     const logTableBody = document.getElementById('log-table-body');
 
+    // Ensure the log table is visible
+    if (logTableBody) {
+        logTableBody.innerHTML = ''; // Clear "No logs available" message when starting
+    }
+
     if (startButton && stopButton) {
         // Start Incubation
         startButton.addEventListener('click', () => {
@@ -79,3 +84,7 @@ function startPeriodicUpdates(interval = 5000) {
         }
     }, interval);
 }
+
+// Call setup functions
+setupButtonControls();
+startPeriodicUpdates();
