@@ -1,20 +1,60 @@
+/* General Body Styling */
 body {
-    background-image: url('pexels-pixabay-5143.jpg');  /* Replace with the actual file path */
+    background-image: url('C:/Users/G.O.A.T/Downloads/pexels-pixabay-5143.jpg'); /* Replace with the actual file path */
     background-size: cover; /* Make the image cover the entire background */
     background-position: center; /* Center the image */
     background-repeat: no-repeat; /* Prevent tiling */
-    color: white; /* Change text color for better readability */
+    color: white; /* Default text color for readability */
+    font-family: Arial, sans-serif; /* Default font */
+    margin: 0;
+    padding: 0;
 }
+
+/* Navbar Customization */
+.navbar {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+    background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black */
+}
+
 .navbar-nav .nav-link {
     font-size: 1.1rem;
     padding: 10px;
+    color: #ffffff !important; /* Keep nav links white */
 }
-/* General Styles */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f8f9fa; /* Light background to contrast with sections */
-    margin: 0;
-    padding: 0;
+
+/* Jumbotron Customization */
+.jumbotron {
+    background-color: rgba(211, 211, 211, 0.85); /* Light grey with transparency */
+    padding: 30px 20px; /* Reduce padding to make the jumbotron smaller */
+    border-radius: 10px; /* Rounded corners */
+    margin-bottom: 30px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+/* Jumbotron Heading */
+.jumbotron .display-4 {
+    font-size: 2rem; /* Adjust the font size to be smaller */
+    color: #333333; /* Dark grey for contrast */
+}
+
+/* Jumbotron Text */
+.jumbotron .lead {
+    font-size: 1.2rem;
+    color: #555555; /* Lighter grey for readability */
+}
+
+/* Jumbotron Button */
+.jumbotron .btn-primary {
+    background-color: #8b4513; /* SaddleBrown for button */
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    color: #f8f1e9; /* Beige text */
+    transition: background-color 0.3s ease;
+}
+
+.jumbotron .btn-primary:hover {
+    background-color: #a0522d; /* Lighter brown on hover */
 }
 
 /* Section Styles */
@@ -24,12 +64,13 @@ section {
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
     background-color: #ffffff; /* White background for sections */
+    color: #343a40; /* Ensure text inside sections is visible */
 }
 
 /* Section Headers */
 section h2 {
     font-size: 1.8rem;
-    color: #343a40; /* Dark gray text color */
+    color: #000000; /* Solid black for section headers */
     border-bottom: 2px solid #dee2e6; /* Add a bottom border to section titles */
     padding-bottom: 10px;
     margin-bottom: 20px;
@@ -41,6 +82,7 @@ section h2 {
     background-color: #f1f1f1; /* Slightly off-white for cards */
     border-radius: 8px; /* Rounded corners */
     padding: 15px;
+    color: #212529; /* Text inside cards should be dark gray */
 }
 
 /* Button Styles */
@@ -61,38 +103,25 @@ footer {
     margin-top: 30px;
     text-align: center;
     font-size: 0.9rem;
-    color: #6c757d; /* Bootstrap gray */
-}
-
-/* Navbar Customization */
-.navbar {
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
-}
-
-.nav-link {
-    color: #ffffff !important; /* Ensure nav links stay white */
-}
-/* General Text Styling */
-body {
-    color: #212529; /* Dark gray text for better readability */
-}
-
-/* Section Text */
-section {
-    color: #343a40; /* Ensure text inside sections is visible */
-}
-
-/* Section Headers */
-section h2 {
-    color: #000000; /* Solid black for section headers */
-}
-
-/* Cards and Forms */
-.card {
-    color: #212529; /* Text inside cards should also be dark gray */
-}
-
-/* Footer Text */
-footer {
     color: #495057; /* Slightly lighter gray for footer text */
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .jumbotron {
+        padding: 20px 10px; /* Reduce padding for smaller screens */
+    }
+
+    .jumbotron .display-4 {
+        font-size: 1.5rem;
+    }
+
+    .jumbotron .lead {
+        font-size: 1rem;
+    }
+
+    .jumbotron .btn-primary {
+        font-size: 0.9rem;
+        padding: 8px 16px;
+    }
 }
