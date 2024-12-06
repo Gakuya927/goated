@@ -1,125 +1,96 @@
-// Ensure the DOM is fully loaded before adding event listeners
-document.addEventListener("DOMContentLoaded", () => {
-    // Get button and status elements
+// Fetch temperature and humidity data from Netlify function
+async function getTemperatureData() {
+    try {
+        const response = await fetch('/.netlify/functions/temperature');
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+
+        // Update the temperature and humidity values
+        const temperature = data.temperature ?? '--';
+        const humidity = data.humidity ?? '--';
+
+        document.getElementById('temperature').innerText = `${temperature} °C`;
+        document.getElementById('humidity').innerText = `${humidity} %`;
+    } catch (error) {
+        console.error("Error fetching temperature and humidity data:", error);
+        document.getElementById('temperature').innerText = '-- °C';
+        document.getElementById('humidity').innerText = '-- %';
+    }
+}
+
+// Set up event listeners for Start and Stop buttons
+function setupButtonControls() {
     const startButton = document.getElementById('start-incubation');
     const stopButton = document.getElementById('stop-incubation');
     const incubatorState = document.getElementById('incubator-state');
     const statusMessage = document.getElementById('status-message');
 
-    // Add event listeners for Start and Stop buttons
-    if (startButton && stopButton && incubatorState && statusMessage) {
+    if (startButton && stopButton) {
         startButton.addEventListener('click', () => {
             incubatorState.textContent = 'Running';
-            incubatorState.style.color = 'green'; // Update color to green
+            incubatorState.style.color = 'green';
             statusMessage.textContent = 'Status: Incubation is running.';
             statusMessage.style.color = 'green';
         });
 
         stopButton.addEventListener('click', () => {
             incubatorState.textContent = 'Stopped';
-            incubatorState.style.color = 'red'; // Update color to red
+            incubatorState.style.color = 'red';
             statusMessage.textContent = 'Status: Incubation is stopped.';
             statusMessage.style.color = 'red';
         });
     } else {
-        console.error("Start/Stop buttons or status elements not found.");
+        console.error("Start/Stop buttons not found in the DOM.");
     }
+}
 
-    // Event listener for "Save Settings" button
-    const saveSettingsButton = document.getElementById("save-settings");
-    if (saveSettingsButton) {
-        saveSettingsButton.addEventListener("click", () => {
-            // Get input values
-            const temperatureInput = document.getElementById("temperature-input").value;
-            const humidityInput = document.getElementById("humidity-input").value;
+// Update the temperature and humidity periodically
+function startPeriodicUpdates(interval = 5000) {
+    getTemperatureData(); // Fetch initial data
+    setInterval(getTemperatureData, interval); // Periodic updates
+}
 
-            // Validate inputs
-            if (!temperatureInput || !humidityInput) {
-                alert("Please enter valid temperature and humidity values.");
-                return;
-            }
-
-            // Update status section
-            document.getElementById("temperature").textContent = `${temperatureInput} °C`;
-            document.getElementById("humidity").textContent = `${humidityInput} %`;
-
-            // Update logs
-            updateLogsTable(temperatureInput, humidityInput, "Settings Updated");
-
-            // Close the modal (Bootstrap modal)
-            const settingsModal = new bootstrap.Modal(document.getElementById("settingsModal"));
-            settingsModal.hide();
-
-            alert("Settings updated successfully and logged.");
+// Event listener for showing the Status Modal
+function setupModalEventListener() {
+    const statusModal = document.getElementById('statusModal');
+    if (statusModal) {
+        statusModal.addEventListener('show.bs.modal', () => {
+            getTemperatureData();
         });
     } else {
-        console.error("'Save Settings' button not found.");
+        console.error("Status Modal not found in the DOM.");
     }
+}
 
-    // Triggering the chick hatching notification modal
-    function showChickHatchNotification() {
-        const myModal = new bootstrap.Modal(document.getElementById('chickHatchModal'));
-        myModal.show();
+// Initialize the settings form functionality
+function setupSettingsForm() {
+    const saveButton = document.getElementById('save-settings');
+    if (saveButton) {
+        saveButton.addEventListener('click', () => {
+            const humidityInput = document.getElementById('humidity-input').value;
+            const temperatureInput = document.getElementById('temperature-input').value;
+
+            if (humidityInput && temperatureInput) {
+                console.log(`New Settings - Humidity: ${humidityInput}%, Temperature: ${temperatureInput}°C`);
+                alert("Settings saved successfully!");
+            } else {
+                alert("Please enter valid values for humidity and temperature.");
+            }
+        });
+    } else {
+        console.error("Save Settings button not found in the DOM.");
     }
+}
 
-    // Simulate a chick hatching detection event (for testing purposes)
-    setTimeout(() => {
-        showChickHatchNotification();
-    }, 5000); // Modal will appear 5 seconds after the page loads
+// Main function to initialize the script
+function initializeEggIncubatorApp() {
+    setupButtonControls();
+    setupSettingsForm();
+    setupModalEventListener();
+    startPeriodicUpdates();
+}
 
-    // Function to fetch temperature and humidity data
-    function getTemperatureData() {
-        fetch('/.netlify/functions/temperature') // Netlify function endpoint
-            .then((response) => response.json())
-            .then((data) => {
-                // Round the temperature and humidity to whole numbers before displaying
-                const roundedTemperature = Math.round(data.temperature);
-                const roundedHumidity = Math.round(data.humidity);
-
-                // Update the Status Modal fields
-                document.getElementById('temperature').textContent = `${roundedTemperature} °C`;
-                document.getElementById('humidity').textContent = `${roundedHumidity} %`;
-
-                // Update the logs table
-                updateLogsTable(roundedTemperature, roundedHumidity, "Running");
-            })
-            .catch((error) => {
-                console.error('Error fetching temperature data:', error);
-            });
-    }
-
-    // Function to update the logs table
-    function updateLogsTable(temperature, humidity, state) {
-        const tableBody = document.getElementById('log-table-body');
-        if (!tableBody) {
-            console.error("Logs table body not found.");
-            return;
-        }
-
-        // Remove the placeholder "No logs available" row if it exists
-        const noLogsMessage = tableBody.querySelector("tr td[colspan='4']");
-        if (noLogsMessage) {
-            noLogsMessage.parentElement.removeChild(noLogsMessage);
-        }
-
-        // Create a new row
-        const row = document.createElement('tr');
-
-        // Format the current timestamp
-        const timestamp = new Date().toLocaleString();
-
-        // Add table cells for each piece of data
-        row.innerHTML = `
-            <td>${timestamp}</td>
-            <td>${temperature} °C</td>
-            <td>${humidity} %</td>
-            <td>${state}</td>
-        `;
-
-        // Append the new row to the table
-        tableBody.appendChild(row);
-    }
-
-    // Fetch temperature data every 5 seconds
-    setInterval(getTemperatureData, 5000);
-});
+// Wait for DOM content to fully load before initializing
+document.addEventListener('DOMContentLoaded', initializeEggIncubatorApp);
