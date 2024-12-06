@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Egg Incubator</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+  <!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Egg Incubator</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#statusModal">
+                        <i class="fas fa-tachometer-alt"></i> Status
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#logsModal">
+                        <i class="fas fa-book"></i> Logs
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#settingsModal">
+                        <i class="fas fa-cogs"></i> Settings
+                    </a>
+                </li>
+                <!-- Added Links for Modals -->
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#alertsModal">
+                        <i class="fas fa-bell"></i> Alerts
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#blogsModal">
+                        <i class="fas fa-blog"></i> Blogs
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#pricingModal">
+                        <i class="fas fa-tags"></i> Pricing
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+
+
+   <!-- Jumbotron -->
+<section class="jumbotron text-center mt-4">
+    <h1 class="display-4">Welcome to the Smart Egg Incubator</h1>
+    <p class="lead">Ensure optimal conditions for hatching eggs with real-time monitoring and control.</p>
+    <hr class="my-4">
+    <p>Start incubation today and track your egg's progress!</p>
+    <!-- Updated Button -->
+    <a class="btn btn-primary btn-lg" href="#" role="button" data-bs-toggle="modal" data-bs-target="#statusModal">Start Now</a>
+</section>
+
+
+    <!-- Modals for Status, Logs, and Settings -->
+    <div class="container">
+        <!-- Status Modal -->
+        <div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="statusModalLabel">Status</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Current temperature: <span id="temperature">-- °C</span></p>
+                        <p>Current humidity: <span id="humidity">-- %</span></p>
+                        <p>Incubator state: <span id="incubator-state">--</span></p>
+                        <button class="btn btn-success" id="start-incubation">Start Incubation</button>
+                        <button class="btn btn-danger" id="stop-incubation">Stop Incubation</button>
+                        <p class="mt-2 text-muted" id="status-message">Status: Incubation is stopped.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logs Modal -->
+        <div class="modal fade" id="logsModal" tabindex="-1" aria-labelledby="logsModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="logsModalLabel">Logs</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Temperature (°C)</th>
+                                    <th>Humidity (%)</th>
+                                    <th>Incubator State</th>
+                                </tr>
+                            </thead>
+                            <tbody id="log-table-body">
+                                <tr><td colspan="4" class="text-center">No logs available.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Modal -->
+        <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="settingsModalLabel">Settings</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="settings-form">
+                            <div class="mb-3">
+                                <label for="humidity-input" class="form-label">Humidity (%)</label>
+                                <input type="number" id="humidity-input" class="form-control" placeholder="Enter humidity value">
+                            </div>
+                            <div class="mb-3">
+                                <label for="temperature-input" class="form-label">Temperature (°C)</label>
+                                <input type="number" id="temperature-input" class="form-control" placeholder="Enter temperature value">
+                            </div>
+                            <button type="button" class="btn btn-primary" id="save-settings">Save Settings</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Alerts Modal -->
+<div class="modal fade" id="alertsModal" tabindex="-1" aria-labelledby="alertsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="alertsModalLabel">Alerts</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ul>
+                    <li>Temperature outside optimal range: Please adjust the incubator settings.</li>
+                    <li>Humidity levels are too high: Please reduce humidity to the recommended level.</li>
+                    <li>Chick hatching detected: Check the incubator’s status for more details.</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Blogs Modal -->
+<div class="modal fade" id="blogsModal" tabindex="-1" aria-labelledby="blogsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="blogsModalLabel">Blog Posts</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h4>Blog Title 1</h4>
+                <p>This is a blog post about incubator maintenance...</p>
+                <hr>
+                <h4>Blog Title 2</h4>
+                <p>Best practices for monitoring temperature and humidity in an incubator...</p>
+                <hr>
+                <h4>Blog Title 3</h4>
+                <p>How to identify chick sounds and monitor progress during incubation...</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Pricing Modal -->
+<div class="modal fade" id="pricingModal" tabindex="-1" aria-labelledby="pricingModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="pricingModalLabel">Pricing</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h4>Standard Package</h4>
+                <p>Price: $199</p>
+                <ul>
+                    <li>Includes basic egg incubator with temperature and humidity control</li>
+                    <li>Real-time monitoring and alerts</li>
+                </ul>
+                <hr>
+                <h4>Premium Package</h4>
+                <p>Price: $299</p>
+                <ul>
+                    <li>Includes egg incubator with advanced features</li>
+                    <li>Sound detection for chick hatching</li>
+                    <li>Additional sensors for better control</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white mt-4 py-3">
+        <div class="container text-center">
+            <p>&copy; 2024 EEE PROJECT. All Rights Reserved.</p>
+            <p>Designed by Brian Gakuya and Team</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
