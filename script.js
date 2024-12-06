@@ -73,4 +73,23 @@ function showChickHatchNotification() {
 setTimeout(() => {
     showChickHatchNotification();
 }, 5000);  // Modal will appear 5 seconds after the page loads (for demo)
+// Function to fetch temperature and humidity data
+function getTemperatureData() {
+    fetch('/.netlify/functions/temperature') // Netlify function endpoint
+        .then((response) => response.json())
+        .then((data) => {
+            // Update the Status Modal fields
+            document.getElementById('temperature').textContent = `${data.temperature} °C`;
+            document.getElementById('humidity').textContent = `${data.humidity} %`;
+        })
+        .catch((error) => {
+            console.error('Error fetching temperature data:', error);
+        });
+}
+
+// Fetch and update data every 5 seconds
+setInterval(getTemperatureData, 5000);
+
+// Fetch data on page load as well
+document.addEventListener('DOMContentLoaded', getTemperatureData);
 
