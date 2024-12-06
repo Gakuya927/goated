@@ -125,3 +125,25 @@ footer {
         padding: 8px 16px;
     }
 }
+.floating-help {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    width: 60px;
+    height: 60px;
+    background-color: #17a2b8; /* Bootstrap info color */
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.floating-help:hover {
+    background-color: #138496;
+    cursor: pointer;
+}
+
