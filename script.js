@@ -18,68 +18,6 @@ stopButton.addEventListener('click', () => {
     statusMessage.textContent = 'Status: Incubation is stopped.';
     statusMessage.style.color = 'red';
 });
-
-// Triggering the chick hatching notification modal
-function showChickHatchNotification() {
-    const myModal = new bootstrap.Modal(document.getElementById('chickHatchModal'));
-    myModal.show();
-}
-
-// Simulating a chick hatching detection event (for testing purposes)
-setTimeout(() => {
-    showChickHatchNotification();
-}, 5000); // Modal will appear 5 seconds after the page loads (for demo purposes)
-
-// Function to fetch temperature and humidity data
-function getTemperatureData() {
-    fetch('/.netlify/functions/temperature') // Netlify function endpoint
-        .then((response) => response.json())
-        .then((data) => {
-            // Round the temperature and humidity to whole numbers before displaying
-            const roundedTemperature = Math.round(data.temperature);
-            const roundedHumidity = Math.round(data.humidity);
-
-            // Update the Status Modal fields
-            document.getElementById('temperature').textContent = `${roundedTemperature} °C`;
-            document.getElementById('humidity').textContent = `${roundedHumidity} %`;
-
-            // Update the logs table
-            updateLogsTable(roundedTemperature, roundedHumidity, "Running");
-        })
-        .catch((error) => {
-            console.error('Error fetching temperature data:', error);
-        });
-}
-
-// Function to update the logs table
-function updateLogsTable(temperature, humidity, state) {
-    const tableBody = document.getElementById('log-table-body');
-
-    // Remove the placeholder "No logs available" row if it exists
-    const noLogsMessage = tableBody.querySelector("tr td[colspan='4']");
-    if (noLogsMessage) {
-        noLogsMessage.parentElement.removeChild(noLogsMessage);
-    }
-
-    // Create a new row
-    const row = document.createElement('tr');
-
-    // Format the current timestamp
-    const timestamp = new Date().toLocaleString();
-
-    // Add table cells for each piece of data
-    row.innerHTML = `
-        <td>${timestamp}</td>
-        <td>${temperature} °C</td>
-        <td>${humidity} %</td>
-        <td>${state}</td>
-    `;
-
-    // Append the new row to the table
-    tableBody.appendChild(row);
-}
-
-// Event listener for "Save Settings" button
 document.getElementById("save-settings").addEventListener("click", () => {
     // Get input values
     const temperatureInput = document.getElementById("temperature-input").value;
@@ -92,18 +30,86 @@ document.getElementById("save-settings").addEventListener("click", () => {
     }
 
     // Update status section
-    document.getElementById("temperature").textContent = `${temperatureInput} °C`;
-    document.getElementById("humidity").textContent = `${humidityInput} %`;
+    document.getElementById("temperature").textContent = ${temperatureInput} °C;
+    document.getElementById("humidity").textContent = ${humidityInput} %;
 
-    // Update logs
-    updateLogsTable(temperatureInput, humidityInput, "Settings Updated");
+    // Update logs table
+    const logTableBody = document.getElementById("log-table-body");
 
-    // Close the modal
+    // Get current timestamp
+    const timestamp = new Date().toLocaleString();
+
+    // Create a new row
+    const newRow = document.createElement("tr");
+    newRow.innerHTML = 
+        <td>${timestamp}</td>
+        <td>${temperatureInput} °C</td>
+        <td>${humidityInput} %</td>
+        <td>Settings Updated</td>
+    ;
+
+    // Add the new row to the table
+    logTableBody.appendChild(newRow);
+
+    // Clear the "No logs available" message if it exists
+    const noLogsMessage = logTableBody.querySelector("tr td[colspan='4']");
+    if (noLogsMessage) {
+        noLogsMessage.parentElement.removeChild(noLogsMessage);
+    }
+
+    // Close the modal (optional)
     const settingsModal = new bootstrap.Modal(document.getElementById("settingsModal"));
     settingsModal.hide();
 
     alert("Settings updated successfully and logged.");
 });
+// Triggering the chick hatching notification modal
+function showChickHatchNotification() {
+    const myModal = new bootstrap.Modal(document.getElementById('chickHatchModal'));
+    myModal.show();
+}
 
+// Simulating a chick hatching detection event (for testing purposes)
+setTimeout(() => {
+    showChickHatchNotification();
+}, 5000);  // Modal will appear 5 seconds after the page loads (for demo)
+// Function to fetch temperature and humidity data
+function getTemperatureData() {
+    fetch('/.netlify/functions/temperature') // Netlify function endpoint
+        .then((response) => response.json())
+        .then((data) => {
+            // Round the temperature and humidity to whole numbers before displaying
+            const roundedTemperature = Math.round(data.temperature);
+            const roundedHumidity = Math.round(data.humidity);
+
+            // Update the Status Modal fields
+            document.getElementById('temperature').textContent = ${roundedTemperature} °C;
+            document.getElementById('humidity').textContent = ${roundedHumidity} %;
+        })
+        .catch((error) => {
+            console.error('Error fetching temperature data:', error);
+        });
+}
+
+function updateLogsTable(temperature, humidity, state) {
+    const tableBody = document.getElementById('log-table-body');
+
+    // Create a new row
+    const row = document.createElement('tr');
+
+    // Format the current timestamp
+    const timestamp = new Date().toLocaleString();
+
+    // Add table cells for each piece of data
+    row.innerHTML = 
+        <td>${timestamp}</td>
+        <td>${temperature} °C</td>
+        <td>${humidity} %</td>
+        <td>${state}</td>
+    ;
+
+    // Append the new row to the table
+    tableBody.appendChild(row);
+}
 // Fetch temperature data every 5 seconds
 setInterval(getTemperatureData, 5000);
