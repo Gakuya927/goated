@@ -280,6 +280,31 @@
 
     </button>
 </div>
+<script>
+    // Function to fetch temperature and humidity data from Netlify function
+async function getTemperatureData() {
+  try {
+    const response = await fetch('/.netlify/functions/temperature');
+    const data = await response.json();
+
+    // Update the temperature and humidity in the Status Modal
+    document.getElementById('temperature').innerText = `${data.temperature} °C`;
+    document.getElementById('humidity').innerText = `${data.humidity} %`;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+}
+
+// Add an event listener to update temperature data when the Status Modal opens
+document.getElementById('statusModal').addEventListener('show.bs.modal', function () {
+  getTemperatureData();
+});
+
+// Optionally, you can also update data every few seconds (e.g., every 5 seconds)
+setInterval(getTemperatureData, 5000);
+
+// Include the script code here
+</script>
 
 </body>
 </html>
