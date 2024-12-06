@@ -1,5 +1,5 @@
 body {
-    background-image: url('C:/Users/G.O.A.T/Downloads/pexels-pixabay-5143.jpg'); /* Replace with the actual file path */
+    background-image: url('images/pexels-pixabay-5143.jpg');  /* Replace with the actual file path */
     background-size: cover; /* Make the image cover the entire background */
     background-position: center; /* Center the image */
     background-repeat: no-repeat; /* Prevent tiling */
