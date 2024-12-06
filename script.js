@@ -91,4 +91,24 @@ function getTemperatureData() {
         });
 }
 
+function updateLogsTable(temperature, humidity, state) {
+    const tableBody = document.getElementById('log-table-body');
+
+    // Create a new row
+    const row = document.createElement('tr');
+
+    // Format the current timestamp
+    const timestamp = new Date().toLocaleString();
+
+    // Add table cells for each piece of data
+    row.innerHTML = `
+        <td>${timestamp}</td>
+        <td>${temperature} °C</td>
+        <td>${humidity} %</td>
+        <td>${state}</td>
+    `;
+
+    // Append the new row to the table
+    tableBody.appendChild(row);
+}
 
