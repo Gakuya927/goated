@@ -73,3 +73,4 @@ function showChickHatchNotification() {
 setTimeout(() => {
     showChickHatchNotification();
 }, 5000);  // Modal will appear 5 seconds after the page loads (for demo)
+
