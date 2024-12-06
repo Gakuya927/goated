@@ -132,7 +132,7 @@ footer {
     z-index: 1000;
     display: flex;
     align-items: center;
-    background: #007bff;
+    background: #8B4513; /* Brownish color */
     border-radius: 50px;
     padding: 10px 15px;
     color: white;
@@ -145,6 +145,7 @@ footer {
 .floating-help:hover {
     transform: scale(1.1);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    background: #A0522D; /* Slightly lighter brown for hover effect */
 }
 
 .floating-help i {
@@ -156,3 +157,4 @@ footer {
     font-size: 1rem;
     font-weight: bold;
 }
+
