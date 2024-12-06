@@ -9,7 +9,7 @@ function setupButtonControls() {
     const statusMessage = document.getElementById('status-message');
     const logTableBody = document.getElementById('log-table-body');
 
-    // Ensure the log table is visible
+    // Ensure log table is visible
     if (logTableBody) {
         logTableBody.innerHTML = ''; // Clear "No logs available" message when starting
     }
@@ -17,6 +17,11 @@ function setupButtonControls() {
     if (startButton && stopButton) {
         // Start Incubation
         startButton.addEventListener('click', () => {
+            // Check if incubator state is already running
+            if (incubatorRunning) {
+                return; // Prevent multiple start clicks
+            }
+
             incubatorRunning = true; // Update state
             incubatorState.textContent = 'Running';
             incubatorState.style.color = 'green';
@@ -30,6 +35,11 @@ function setupButtonControls() {
 
         // Stop Incubation
         stopButton.addEventListener('click', () => {
+            // Check if incubator state is already stopped
+            if (!incubatorRunning) {
+                return; // Prevent multiple stop clicks
+            }
+
             incubatorRunning = false; // Update state
             incubatorState.textContent = 'Stopped';
             incubatorState.style.color = 'red';
@@ -85,6 +95,8 @@ function startPeriodicUpdates(interval = 5000) {
     }, interval);
 }
 
-// Call setup functions
-setupButtonControls();
-startPeriodicUpdates();
+// Call setup functions when the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', () => {
+    setupButtonControls();  // Set up event listeners for Start/Stop buttons
+    startPeriodicUpdates();  // Start the periodic update of temperature/humidity
+});
