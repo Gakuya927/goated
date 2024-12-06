@@ -78,18 +78,17 @@ function getTemperatureData() {
     fetch('/.netlify/functions/temperature') // Netlify function endpoint
         .then((response) => response.json())
         .then((data) => {
+            // Round the temperature and humidity to whole numbers before displaying
+            const roundedTemperature = Math.round(data.temperature);
+            const roundedHumidity = Math.round(data.humidity);
+
             // Update the Status Modal fields
-            document.getElementById('temperature').textContent = `${data.temperature} °C`;
-            document.getElementById('humidity').textContent = `${data.humidity} %`;
+            document.getElementById('temperature').textContent = `${roundedTemperature} °C`;
+            document.getElementById('humidity').textContent = `${roundedHumidity} %`;
         })
         .catch((error) => {
             console.error('Error fetching temperature data:', error);
         });
 }
 
-// Fetch and update data every 5 seconds
-setInterval(getTemperatureData, 5000);
-
-// Fetch data on page load as well
-document.addEventListener('DOMContentLoaded', getTemperatureData);
 
