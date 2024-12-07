@@ -157,11 +157,3 @@ footer {
     font-size: 1rem;
     font-weight: bold;
 }
-#weather-info {
-    background-color: rgba(211, 211, 211, 0.7);  /* Light grey with transparency */
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-
