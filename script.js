@@ -1,102 +1,114 @@
-// Track incubator state
-let incubatorRunning = false;
+// Initialize chart variable
+let temperatureChart;
 
-// Set up event listeners for Start and Stop buttons
-function setupButtonControls() {
-    const startButton = document.getElementById('start-incubation');
-    const stopButton = document.getElementById('stop-incubation');
-    const incubatorState = document.getElementById('incubator-state');
-    const statusMessage = document.getElementById('status-message');
-    const logTableBody = document.getElementById('log-table-body');
+// Function to fetch temperature and humidity data from Netlify function
+async function getTemperatureData() {
+    try {
+        const response = await fetch('/.netlify/functions/temperature');
+        const data = await response.json();
 
-    // Ensure log table is visible
-    if (logTableBody) {
-        logTableBody.innerHTML = ''; // Clear "No logs available" message when starting
-    }
+        // Update the temperature and humidity in the Status Modal
+        document.getElementById('temperature').innerText = `${data.temperature} °C`;
+        document.getElementById('humidity').innerText = `${data.humidity} %`;
 
-    if (startButton && stopButton) {
-        // Start Incubation
-        startButton.addEventListener('click', () => {
-            // Check if incubator state is already running
-            if (incubatorRunning) {
-                return; // Prevent multiple start clicks
-            }
-
-            incubatorRunning = true; // Update state
-            incubatorState.textContent = 'Running';
-            incubatorState.style.color = 'green';
-            statusMessage.textContent = 'Status: Incubation is running.';
-            statusMessage.style.color = 'green';
-
-            // Log the event
-            const now = new Date().toLocaleString();
-            addLogEntry(logTableBody, now, '--', '--', 'Running');
-        });
-
-        // Stop Incubation
-        stopButton.addEventListener('click', () => {
-            // Check if incubator state is already stopped
-            if (!incubatorRunning) {
-                return; // Prevent multiple stop clicks
-            }
-
-            incubatorRunning = false; // Update state
-            incubatorState.textContent = 'Stopped';
-            incubatorState.style.color = 'red';
-            statusMessage.textContent = 'Status: Incubation is stopped.';
-            statusMessage.style.color = 'red';
-
-            // Log the event
-            const now = new Date().toLocaleString();
-            addLogEntry(logTableBody, now, '--', '--', 'Stopped');
-        });
-    } else {
-        console.error("Start/Stop buttons not found in the DOM.");
+        // Update the chart data
+        updateChart(data.temperature, data.humidity);
+    } catch (error) {
+        console.error("Error fetching data:", error);
     }
 }
 
-// Add a new log entry to the table
-function addLogEntry(tableBody, timestamp, temperature, humidity, state) {
-    const row = document.createElement('tr');
-    row.innerHTML = `
-        <td>${timestamp}</td>
-        <td>${temperature}</td>
-        <td>${humidity}</td>
-        <td>${state}</td>
-    `;
-    tableBody.prepend(row); // Add the new entry at the top
-}
-
-// Periodically update logs with temperature and humidity data
-function startPeriodicUpdates(interval = 5000) {
-    const logTableBody = document.getElementById('log-table-body');
-
-    setInterval(async () => {
-        try {
-            const response = await fetch('/.netlify/functions/temperature');
-            const data = await response.json();
-            const now = new Date().toLocaleString();
-
-            // Update the temperature and humidity on the Status Modal
-            const temperature = data.temperature ?? '--';
-            const humidity = data.humidity ?? '--';
-            document.getElementById('temperature').innerText = `${temperature} °C`;
-            document.getElementById('humidity').innerText = `${humidity} %`;
-
-            // Add a log entry only if the incubator is running
-            if (incubatorRunning) {
-                addLogEntry(logTableBody, now, temperature, humidity, 'Running');
-            } else {
-                addLogEntry(logTableBody, now, temperature, humidity, 'Stopped');
+// Function to initialize the chart
+function initializeChart() {
+    const ctx = document.getElementById('temperatureChart').getContext('2d');
+    temperatureChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],  // Empty initially, will be filled dynamically
+            datasets: [
+                {
+                    label: 'Temperature (°C)',
+                    borderColor: 'rgb(255, 99, 132)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    data: [],  // Empty initially, will be filled dynamically
+                    fill: false,
+                    tension: 0.1
+                },
+                {
+                    label: 'Humidity (%)',
+                    borderColor: 'rgb(54, 162, 235)',
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    data: [],  // Empty initially, will be filled dynamically
+                    fill: false,
+                    tension: 0.1
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Temperature and Humidity over Time'
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false
+                }
+            },
+            interaction: {
+                mode: 'nearest',
+                intersect: false
+            },
+            scales: {
+                x: {
+                    type: 'linear',
+                    position: 'bottom',
+                    title: {
+                        display: true,
+                        text: 'Time (Seconds)'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Value'
+                    }
+                }
             }
-        } catch (error) {
-            console.error("Error fetching temperature and humidity data:", error);
         }
-    }, interval);
+    });
 }
 
-// Call setup functions when the DOM is fully loaded
-document.addEventListener('DOMContentLoaded', () => {
-    setupButtonControls();  // Set up event listeners for Start/Stop buttons
-    startPeriodicUpdates();  // Start the periodic update of temperature/humidity
+// Function to update the chart with new data
+function updateChart(temperature, humidity) {
+    const currentTime = Date.now();  // Get the current timestamp
+    const timeInSeconds = Math.floor(currentTime / 1000);  // Convert to seconds
+
+    // Add new data point to the chart (up to 50 data points)
+    if (temperatureChart.data.labels.length > 50) {
+        temperatureChart.data.labels.shift();
+        temperatureChart.data.datasets[0].data.shift();
+        temperatureChart.data.datasets[1].data.shift();
+    }
+
+    temperatureChart.data.labels.push(timeInSeconds);
+    temperatureChart.data.datasets[0].data.push(temperature);
+    temperatureChart.data.datasets[1].data.push(humidity);
+
+    // Update the chart with the new data
+    temperatureChart.update();
+}
+
+// Add an event listener to update temperature data when the Status Modal opens
+document.getElementById('statusModal').addEventListener('show.bs.modal', function () {
+    getTemperatureData();
 });
+
+// Optionally, you can also update data every few seconds (e.g., every 5 seconds)
+setInterval(getTemperatureData, 5000);
+
+// Initialize the chart on page load
+window.onload = function () {
+    initializeChart();
+}
