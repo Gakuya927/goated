@@ -1,5 +1,6 @@
 // Initialize chart variable
 let temperatureChart;
+let lastTimeInMinutes = 0; // Variable to track the last time in minutes
 
 // Function to fetch temperature and humidity data from Netlify function
 async function getTemperatureData() {
@@ -66,7 +67,10 @@ function initializeChart() {
                     position: 'bottom',
                     title: {
                         display: true,
-                        text: 'Time (Seconds)'
+                        text: 'Time (Minutes)'
+                    },
+                    ticks: {
+                        stepSize: 5, // Set step size for 5-minute intervals
                     }
                 },
                 y: {
@@ -83,21 +87,26 @@ function initializeChart() {
 // Function to update the chart with new data
 function updateChart(temperature, humidity) {
     const currentTime = Date.now();  // Get the current timestamp
-    const timeInSeconds = Math.floor(currentTime / 1000);  // Convert to seconds
+    const timeInMinutes = Math.floor(currentTime / 60000);  // Convert to minutes
 
-    // Add new data point to the chart (up to 50 data points)
-    if (temperatureChart.data.labels.length > 50) {
-        temperatureChart.data.labels.shift();
-        temperatureChart.data.datasets[0].data.shift();
-        temperatureChart.data.datasets[1].data.shift();
+    // Only update the chart every 5 minutes (if timeInMinutes is a multiple of 5)
+    if (timeInMinutes % 5 === 0 && timeInMinutes !== lastTimeInMinutes) {
+        lastTimeInMinutes = timeInMinutes;
+
+        // Add new data point to the chart (up to 50 data points)
+        if (temperatureChart.data.labels.length > 50) {
+            temperatureChart.data.labels.shift();
+            temperatureChart.data.datasets[0].data.shift();
+            temperatureChart.data.datasets[1].data.shift();
+        }
+
+        temperatureChart.data.labels.push(timeInMinutes);
+        temperatureChart.data.datasets[0].data.push(temperature);
+        temperatureChart.data.datasets[1].data.push(humidity);
+
+        // Update the chart with the new data
+        temperatureChart.update();
     }
-
-    temperatureChart.data.labels.push(timeInSeconds);
-    temperatureChart.data.datasets[0].data.push(temperature);
-    temperatureChart.data.datasets[1].data.push(humidity);
-
-    // Update the chart with the new data
-    temperatureChart.update();
 }
 
 // Add an event listener to update temperature data when the Status Modal opens
