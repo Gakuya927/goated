@@ -183,13 +183,24 @@
             </div>
         </div>
     </div>
-</div>
-    <div id="weather-info">
-    <h3>Local Weather</h3>
+<!-- Inside Status Modal -->
+<div class="modal-body">
+    <p>Current temperature: <span id="temperature">-- °C</span></p>
+    <p>Current humidity: <span id="humidity">-- %</span></p>
+    <p>Incubator state: <span id="incubator-state">--</span></p>
+
+    <!-- Weather Info Section -->
+    <hr>
+    <h5>Local Weather</h5>
     <p>Temperature: <span id="weather-temp">-- °C</span></p>
     <p>Humidity: <span id="weather-humidity">-- %</span></p>
     <p>Condition: <span id="weather-condition">--</span></p>
+
+    <button class="btn btn-success" id="start-incubation">Start Incubation</button>
+    <button class="btn btn-danger" id="stop-incubation">Stop Incubation</button>
+    <p class="mt-2 text-muted" id="status-message">Status: Incubation is stopped.</p>
 </div>
+
 
 <!-- Blogs Modal -->
 <div class="modal fade" id="blogsModal" tabindex="-1" aria-labelledby="blogsModalLabel" aria-hidden="true">
