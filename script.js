@@ -1,5 +1,6 @@
 // Initialize chart variable
 let temperatureChart;
+let dataFetchInterval;
 
 // Function to fetch temperature and humidity data from Netlify function
 async function getTemperatureData() {
@@ -100,15 +101,36 @@ function updateChart(temperature, humidity) {
     temperatureChart.update();
 }
 
+// Function to start the data fetching and chart updates
+function startDataFetching() {
+    // Start fetching data every 5 seconds
+    dataFetchInterval = setInterval(getTemperatureData, 5000);
+
+    // Disable the Start button and enable the Stop button
+    document.getElementById('startButton').disabled = true;
+    document.getElementById('stopButton').disabled = false;
+}
+
+// Function to stop the data fetching and chart updates
+function stopDataFetching() {
+    // Stop the interval that fetches data
+    clearInterval(dataFetchInterval);
+
+    // Enable the Start button and disable the Stop button
+    document.getElementById('startButton').disabled = false;
+    document.getElementById('stopButton').disabled = true;
+}
+
 // Add an event listener to update temperature data when the Status Modal opens
 document.getElementById('statusModal').addEventListener('show.bs.modal', function () {
     getTemperatureData();
 });
 
-// Optionally, you can also update data every few seconds (e.g., every 5 seconds)
-setInterval(getTemperatureData, 5000);
-
 // Initialize the chart on page load
 window.onload = function () {
     initializeChart();
+
+    // Add event listeners to Start and Stop buttons
+    document.getElementById('startButton').addEventListener('click', startDataFetching);
+    document.getElementById('stopButton').addEventListener('click', stopDataFetching);
 }
