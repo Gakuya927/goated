@@ -1,136 +1,96 @@
-// Initialize chart variable
-let temperatureChart;
-let dataFetchInterval;
-
-// Function to fetch temperature and humidity data from Netlify function
+// Fetch temperature and humidity data from Netlify function
 async function getTemperatureData() {
     try {
         const response = await fetch('/.netlify/functions/temperature');
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
         const data = await response.json();
 
-        // Update the temperature and humidity in the Status Modal
-        document.getElementById('temperature').innerText = `${data.temperature} °C`;
-        document.getElementById('humidity').innerText = `${data.humidity} %`;
+        // Update the temperature and humidity values
+        const temperature = data.temperature ?? '--';
+        const humidity = data.humidity ?? '--';
 
-        // Update the chart data
-        updateChart(data.temperature, data.humidity);
+        document.getElementById('temperature').innerText = `${temperature} °C`;
+        document.getElementById('humidity').innerText = `${humidity} %`;
     } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching temperature and humidity data:", error);
+        document.getElementById('temperature').innerText = '-- °C';
+        document.getElementById('humidity').innerText = '-- %';
     }
 }
 
-// Function to initialize the chart
-function initializeChart() {
-    const ctx = document.getElementById('temperatureChart').getContext('2d');
-    temperatureChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: [],  // Empty initially, will be filled dynamically
-            datasets: [
-                {
-                    label: 'Temperature (°C)',
-                    borderColor: 'rgb(255, 99, 132)',
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    data: [],  // Empty initially, will be filled dynamically
-                    fill: false,
-                    tension: 0.1
-                },
-                {
-                    label: 'Humidity (%)',
-                    borderColor: 'rgb(54, 162, 235)',
-                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                    data: [],  // Empty initially, will be filled dynamically
-                    fill: false,
-                    tension: 0.1
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                title: {
-                    display: true,
-                    text: 'Temperature and Humidity over Time'
-                },
-                tooltip: {
-                    mode: 'index',
-                    intersect: false
-                }
-            },
-            interaction: {
-                mode: 'nearest',
-                intersect: false
-            },
-            scales: {
-                x: {
-                    type: 'linear',
-                    position: 'bottom',
-                    title: {
-                        display: true,
-                        text: 'Time (Seconds)'
-                    }
-                },
-                y: {
-                    title: {
-                        display: true,
-                        text: 'Value'
-                    }
-                }
+// Set up event listeners for Start and Stop buttons
+function setupButtonControls() {
+    const startButton = document.getElementById('start-incubation');
+    const stopButton = document.getElementById('stop-incubation');
+    const incubatorState = document.getElementById('incubator-state');
+    const statusMessage = document.getElementById('status-message');
+
+    if (startButton && stopButton) {
+        startButton.addEventListener('click', () => {
+            incubatorState.textContent = 'Running';
+            incubatorState.style.color = 'green';
+            statusMessage.textContent = 'Status: Incubation is running.';
+            statusMessage.style.color = 'green';
+        });
+
+        stopButton.addEventListener('click', () => {
+            incubatorState.textContent = 'Stopped';
+            incubatorState.style.color = 'red';
+            statusMessage.textContent = 'Status: Incubation is stopped.';
+            statusMessage.style.color = 'red';
+        });
+    } else {
+        console.error("Start/Stop buttons not found in the DOM.");
+    }
+}
+
+// Update the temperature and humidity periodically
+function startPeriodicUpdates(interval = 5000) {
+    getTemperatureData(); // Fetch initial data
+    setInterval(getTemperatureData, interval); // Periodic updates
+}
+
+// Event listener for showing the Status Modal
+function setupModalEventListener() {
+    const statusModal = document.getElementById('statusModal');
+    if (statusModal) {
+        statusModal.addEventListener('show.bs.modal', () => {
+            getTemperatureData();
+        });
+    } else {
+        console.error("Status Modal not found in the DOM.");
+    }
+}
+
+// Initialize the settings form functionality
+function setupSettingsForm() {
+    const saveButton = document.getElementById('save-settings');
+    if (saveButton) {
+        saveButton.addEventListener('click', () => {
+            const humidityInput = document.getElementById('humidity-input').value;
+            const temperatureInput = document.getElementById('temperature-input').value;
+
+            if (humidityInput && temperatureInput) {
+                console.log(`New Settings - Humidity: ${humidityInput}%, Temperature: ${temperatureInput}°C`);
+                alert("Settings saved successfully!");
+            } else {
+                alert("Please enter valid values for humidity and temperature.");
             }
-        }
-    });
-}
-
-// Function to update the chart with new data
-function updateChart(temperature, humidity) {
-    const currentTime = Date.now();  // Get the current timestamp
-    const timeInSeconds = Math.floor(currentTime / 1000);  // Convert to seconds
-
-    // Add new data point to the chart (up to 50 data points)
-    if (temperatureChart.data.labels.length > 50) {
-        temperatureChart.data.labels.shift();
-        temperatureChart.data.datasets[0].data.shift();
-        temperatureChart.data.datasets[1].data.shift();
+        });
+    } else {
+        console.error("Save Settings button not found in the DOM.");
     }
-
-    temperatureChart.data.labels.push(timeInSeconds);
-    temperatureChart.data.datasets[0].data.push(temperature);
-    temperatureChart.data.datasets[1].data.push(humidity);
-
-    // Update the chart with the new data
-    temperatureChart.update();
 }
 
-// Function to start the data fetching and chart updates
-function startDataFetching() {
-    // Start fetching data every 5 seconds
-    dataFetchInterval = setInterval(getTemperatureData, 5000);
-
-    // Disable the Start button and enable the Stop button
-    document.getElementById('startButton').disabled = true;
-    document.getElementById('stopButton').disabled = false;
+// Main function to initialize the script
+function initializeEggIncubatorApp() {
+    setupButtonControls();
+    setupSettingsForm();
+    setupModalEventListener();
+    startPeriodicUpdates();
 }
 
-// Function to stop the data fetching and chart updates
-function stopDataFetching() {
-    // Stop the interval that fetches data
-    clearInterval(dataFetchInterval);
-
-    // Enable the Start button and disable the Stop button
-    document.getElementById('startButton').disabled = false;
-    document.getElementById('stopButton').disabled = true;
-}
-
-// Add an event listener to update temperature data when the Status Modal opens
-document.getElementById('statusModal').addEventListener('show.bs.modal', function () {
-    getTemperatureData();
-});
-
-// Initialize the chart on page load
-window.onload = function () {
-    initializeChart();
-
-    // Add event listeners to Start and Stop buttons
-    document.getElementById('startButton').addEventListener('click', startDataFetching);
-    document.getElementById('stopButton').addEventListener('click', stopDataFetching);
-}
+// Wait for DOM content to fully load before initializing
+document.addEventListener('DOMContentLoaded', initializeEggIncubatorApp);
