@@ -1,4 +1,3 @@
-// Initialize chart variable
 let temperatureChart;
 
 // Function to fetch temperature and humidity data from Netlify function
@@ -66,7 +65,14 @@ function initializeChart() {
                     position: 'bottom',
                     title: {
                         display: true,
-                        text: 'Time (Seconds)'
+                        text: 'Time (Minutes)'
+                    },
+                    ticks: {
+                        // Use a fixed number of intervals on the x-axis (minutes)
+                        callback: function (value) {
+                            const minutes = Math.floor(value / 60);
+                            return minutes + 'm';  // Display in minutes
+                        }
                     }
                 },
                 y: {
@@ -83,7 +89,7 @@ function initializeChart() {
 // Function to update the chart with new data
 function updateChart(temperature, humidity) {
     const currentTime = Date.now();  // Get the current timestamp
-    const timeInSeconds = Math.floor(currentTime / 1000);  // Convert to seconds
+    const timeInMinutes = Math.floor(currentTime / 60000);  // Convert to minutes (60000 ms per minute)
 
     // Add new data point to the chart (up to 50 data points)
     if (temperatureChart.data.labels.length > 50) {
@@ -92,7 +98,7 @@ function updateChart(temperature, humidity) {
         temperatureChart.data.datasets[1].data.shift();
     }
 
-    temperatureChart.data.labels.push(timeInSeconds);
+    temperatureChart.data.labels.push(timeInMinutes);
     temperatureChart.data.datasets[0].data.push(temperature);
     temperatureChart.data.datasets[1].data.push(humidity);
 
