@@ -1,6 +1,6 @@
 // Initialize chart variable
 let temperatureChart;
-let lastTimeInMinutes = 0; // Variable to track the last time in minutes
+let lastTimeInMinutes = -1; // Variable to track the last time in minutes
 
 // Function to fetch temperature and humidity data from Netlify function
 async function getTemperatureData() {
@@ -12,7 +12,7 @@ async function getTemperatureData() {
         document.getElementById('temperature').innerText = `${data.temperature} °C`;
         document.getElementById('humidity').innerText = `${data.humidity} %`;
 
-        // Update the chart data
+        // Update the chart data (ensuring updates only happen every 5 minutes)
         updateChart(data.temperature, data.humidity);
     } catch (error) {
         console.error("Error fetching data:", error);
@@ -89,7 +89,7 @@ function updateChart(temperature, humidity) {
     const currentTime = Date.now();  // Get the current timestamp
     const timeInMinutes = Math.floor(currentTime / 60000);  // Convert to minutes
 
-    // Only update the chart every 5 minutes (if timeInMinutes is a multiple of 5)
+    // Only update the chart every 5 minutes (if timeInMinutes is a multiple of 5 and different from lastTimeInMinutes)
     if (timeInMinutes % 5 === 0 && timeInMinutes !== lastTimeInMinutes) {
         lastTimeInMinutes = timeInMinutes;
 
@@ -114,7 +114,7 @@ document.getElementById('statusModal').addEventListener('show.bs.modal', functio
     getTemperatureData();
 });
 
-// Optionally, you can also update data every few seconds (e.g., every 5 seconds)
+// Update temperature data every 5 seconds (this fetches data but chart updates only every 5 minutes)
 setInterval(getTemperatureData, 5000);
 
 // Initialize the chart on page load
