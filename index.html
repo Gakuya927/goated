@@ -164,6 +164,20 @@
             </div>
         </div>
     </div>
+    <!-- Add Start and Stop buttons to control the data fetching -->
+<div class="container mt-4">
+    <button id="startButton" class="btn btn-success">Start</button>
+    <button id="stopButton" class="btn btn-danger" disabled>Stop</button>
+</div>
+
+<!-- The chart -->
+<canvas id="temperatureChart" width="400" height="200"></canvas>
+
+<!-- Modal for displaying temperature and humidity -->
+<div class="modal" id="statusModal" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
+  <!-- Modal content goes here -->
+</div>
+
     <!-- Alerts Modal -->
 <div class="modal fade" id="alertsModal" tabindex="-1" aria-labelledby="alertsModalLabel" aria-hidden="true">
     <div class="modal-dialog">
