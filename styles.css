@@ -157,4 +157,20 @@ footer {
     font-size: 1rem;
     font-weight: bold;
 }
+#weather-info {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+#weather-info h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+#weather-info p {
+    font-size: 1.1rem;
+    margin: 5px 0;
+}
 
