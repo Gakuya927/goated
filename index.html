@@ -1,4 +1,4 @@
-html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -7,12 +7,35 @@ html>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-<link rel="icon" type="image/png" href="favicon.io/favicon-32x32.png">
-
-
+    <link rel="icon" type="image/png" href="favicon.io/favicon-32x32.png">
     <style>
         html {
             scroll-behavior: smooth;
+        }
+        .floating-help {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+        }
+        .floating-help:hover {
+            background-color: #0056b3;
+        }
+        .help-text {
+            display: none;
+        }
+        .floating-help:hover .help-text {
+            display: inline;
+            margin-left: 5px;
         }
     </style>
 </head>
@@ -46,19 +69,7 @@ html>
                         <i class="fas fa-bell"></i> Alerts
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#blogsModal">
-                        <i class="fas fa-blog"></i> Blogs
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#pricingModal">
-                        <i class="fas fa-tags"></i> Pricing
-                    </a>
-                </li>
             </ul>
-
-            <!-- Search Bar with Magnifying Glass Icon -->
             <form class="d-flex ms-auto">
                 <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
                 <button class="btn btn-outline-light" type="submit">
@@ -69,282 +80,101 @@ html>
     </div>
 </nav>
 
-
-
-
-   <!-- Jumbotron -->
+<!-- Jumbotron -->
 <section class="jumbotron text-center mt-4">
     <h1 class="display-4">Welcome to the Smart Egg Incubator</h1>
     <p class="lead">Ensure optimal conditions for hatching eggs with real-time monitoring and control.</p>
     <hr class="my-4">
     <p>Start incubation today and track your egg's progress!</p>
-    <!-- Updated Button -->
     <a class="btn btn-primary btn-lg" href="#" role="button" data-bs-toggle="modal" data-bs-target="#statusModal">Start Now</a>
 </section>
 
-
-    <!-- Modals for Status, Logs, and Settings -->
-    <div class="container">
-        <!-- Status Modal -->
-        <div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="statusModalLabel">Status</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p>Current temperature: <span id="temperature">-- °C</span></p>
-                        <p>Current humidity: <span id="humidity">-- %</span></p>
-                        <p>Incubator state: <span id="incubator-state">--</span></p>
-                        <button class="btn btn-success" id="start-incubation">Start Incubation</button>
-                        <button class="btn btn-danger" id="stop-incubation">Stop Incubation</button>
-                        <p class="mt-2 text-muted" id="status-message">Status: Incubation is stopped.</p>
-                    </div>
+<!-- Modals -->
+<div class="container">
+    <!-- Status Modal -->
+    <div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="statusModalLabel">Status</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-            </div>
-        </div>
-
-        <!-- Logs Modal -->
-        <div class="modal fade" id="logsModal" tabindex="-1" aria-labelledby="logsModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="logsModalLabel">Logs</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <!-- Add this inside the modal or any other section where you want the chart -->
-<div class="container mt-5">
-    <h2>Temperature and Humidity Visualization</h2>
-    <canvas id="temperatureChart" width="400" height="200"></canvas>
-</div>
-
-                    <div class="modal-body">
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Timestamp</th>
-                                    <th>Temperature (°C)</th>
-                                    <th>Humidity (%)</th>
-                                    <th>Incubator State</th>
-                                </tr>
-                            </thead>
-                            <tbody id="log-table-body">
-                                <tr><td colspan="4" class="text-center">No logs available.</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Settings Modal -->
-        <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="settingsModalLabel">Settings</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="settings-form">
-                            <div class="mb-3">
-                                <label for="humidity-input" class="form-label">Humidity (%)</label>
-                                <input type="number" id="humidity-input" class="form-control" placeholder="Enter humidity value">
-                            </div>
-                            <div class="mb-3">
-                                <label for="temperature-input" class="form-label">Temperature (°C)</label>
-                                <input type="number" id="temperature-input" class="form-control" placeholder="Enter temperature value">
-                            </div>
-                            <button type="button" class="btn btn-primary" id="save-settings">Save Settings</button>
-                        </form>
-                    </div>
+                <div class="modal-body">
+                    <p>Current temperature: <span id="temperature">-- °C</span></p>
+                    <p>Current humidity: <span id="humidity">-- %</span></p>
+                    <p>Incubator state: <span id="incubator-state">--</span></p>
+                    <button class="btn btn-success" id="start-incubation">Start Incubation</button>
+                    <button class="btn btn-danger" id="stop-incubation">Stop Incubation</button>
+                    <p class="mt-2 text-muted" id="status-message">Status: Incubation is stopped.</p>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Add Start and Stop buttons to control the data fetching -->
-<div class="container mt-4">
-    <button id="startButton" class="btn btn-success">Start</button>
-    <button id="stopButton" class="btn btn-danger" disabled>Stop</button>
-</div>
 
-<!-- The chart -->
-<canvas id="temperatureChart" width="400" height="200"></canvas>
-
-<!-- Modal for displaying temperature and humidity -->
-<div class="modal" id="statusModal" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
-  <!-- Modal content goes here -->
-</div>
-
-    <!-- Alerts Modal -->
-<div class="modal fade" id="alertsModal" tabindex="-1" aria-labelledby="alertsModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="alertsModalLabel">Alerts</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <ul>
-                    <li>Temperature outside optimal range: Please adjust the incubator settings.</li>
-                    <li>Humidity levels are too high: Please reduce humidity to the recommended level.</li>
-                    <li>Chick hatching detected: Check the incubator’s status for more details.</li>
-                </ul>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-<!-- Inside Status Modal -->
-<div class="modal-body">
-    <p>Current temperature: <span id="temperature">-- °C</span></p>
-    <p>Current humidity: <span id="humidity">-- %</span></p>
-    <p>Incubator state: <span id="incubator-state">--</span></p>
-
-    <!-- Weather Info Section -->
-    <hr>
-    <h5>Local Weather</h5>
-    <p>Temperature: <span id="weather-temp">-- °C</span></p>
-    <p>Humidity: <span id="weather-humidity">-- %</span></p>
-    <p>Condition: <span id="weather-condition">--</span></p>
-
-    <button class="btn btn-success" id="start-incubation">Start Incubation</button>
-    <button class="btn btn-danger" id="stop-incubation">Stop Incubation</button>
-    <p class="mt-2 text-muted" id="status-message">Status: Incubation is stopped.</p>
-</div>
-
-
-<!-- Blogs Modal -->
-<div class="modal fade" id="blogsModal" tabindex="-1" aria-labelledby="blogsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="blogsModalLabel">Blog Posts</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <h4>Blog Title 1</h4>
-                <p>This is a blog post about incubator maintenance...</p>
-                <hr>
-                <h4>Blog Title 2</h4>
-                <p>Best practices for monitoring temperature and humidity in an incubator...</p>
-                <hr>
-                <h4>Blog Title 3</h4>
-                <p>How to identify chick sounds and monitor progress during incubation...</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Pricing Modal -->
-<div class="modal fade" id="pricingModal" tabindex="-1" aria-labelledby="pricingModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="pricingModalLabel">Pricing</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <h4>Standard Package</h4>
-                <p>Price: </p>
-                <ul>
-                    <li>Includes basic egg incubator with temperature and humidity control</li>
-                    <li>Real-time monitoring and alerts</li>
-                </ul>
-                <hr>
-                <h4>Premium Package</h4>
-                <p>Price: </p>
-                <ul>
-                    <li>Includes egg incubator with advanced features</li>
-                    <li>Sound detection for chick hatching</li>
-                    <li>Additional sensors for better control</li>
-                </ul>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Help Modal -->
-<div class="modal fade" id="helpModal" tabindex="-1" aria-labelledby="helpModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="helpModalLabel">Help & Support</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <h4>FAQs</h4>
-                <ul>
-                    <li><strong>Q:</strong> How to start incubation?</li>
-                    <li><strong>A:</strong> Click the "Start Now" button on the homepage.</li>
-
-                    <li><strong>Q:</strong> How to view logs?</li>
-                    <li><strong>A:</strong> Click on "Logs" in the navigation bar.</li>
-                </ul>
-
-                <h4>Contact Us</h4>
-                <p>For further assistance:</p>
-                <p><strong>Email:</strong> support@egginccubator.com</p>
-                <p><strong>Phone:</strong> +254-796-797-090</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    <!-- Logs Modal -->
+    <div class="modal fade" id="logsModal" tabindex="-1" aria-labelledby="logsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="logsModalLabel">Logs</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <canvas id="temperatureChart" width="400" height="200"></canvas>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-    <!-- Footer -->
-    <footer class="bg-dark text-white mt-4 py-3">
-        <div class="container text-center">
-            <p>&copy; 2024 EEE PROJECT. All Rights Reserved.</p>
-            <p>kiwi coders</p>
-        </div>
-    </footer>
-
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="script.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Floating Help Button -->
+<!-- Floating Help Button -->
 <div class="floating-help" data-bs-toggle="modal" data-bs-target="#helpModal">
     <i class="fas fa-question"></i>
-    <span class="help-text">Help</span>
 </div>
 
-    </button>
-</div>
+<!-- Footer -->
+<footer class="bg-dark text-white mt-4 py-3">
+    <div class="container text-center">
+        <p>&copy; 2024 EEE PROJECT. All Rights Reserved.</p>
+    </div>
+</footer>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // Function to fetch temperature and humidity data from Netlify function
-async function getTemperatureData() {
-  try {
-    const response = await fetch('/.netlify/functions/temperature');
-    const data = await response.json();
+    // Fetch and update temperature and humidity
+    async function getTemperatureData() {
+        try {
+            const response = await fetch('/.netlify/functions/temperature');
+            const data = await response.json();
+            document.getElementById('temperature').innerText = `${data.temperature} °C`;
+            document.getElementById('humidity').innerText = `${data.humidity} %`;
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    }
 
-    // Update the temperature and humidity in the Status Modal
-    document.getElementById('temperature').innerText = ${data.temperature} °C;
-    document.getElementById('humidity').innerText = ${data.humidity} %;
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  }
-}
+    // Update data when the Status Modal opens
+    document.getElementById('statusModal').addEventListener('show.bs.modal', getTemperatureData);
 
-// Add an event listener to update temperature data when the Status Modal opens
-document.getElementById('statusModal').addEventListener('show.bs.modal', function () {
-  getTemperatureData();
-});
-
-// Optionally, you can also update data every few seconds (e.g., every 5 seconds)
-setInterval(getTemperatureData, 5000);
-
-// Include the script code here
+    // Initialize chart
+    const ctx = document.getElementById('temperatureChart').getContext('2d');
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [], // Add timestamps dynamically
+            datasets: [{
+                label: 'Temperature (°C)',
+                data: [], // Add temperature data dynamically
+                borderColor: 'rgba(75, 192, 192, 1)',
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true
+        }
+    });
 </script>
-
 </body>
 </html>
