@@ -112,3 +112,23 @@ setInterval(getTemperatureData, 5000);
 window.onload = function () {
     initializeChart();
 }
+async function getWeatherData() {
+    const apiKey = 'YOUR_API_KEY';  // Replace with your OpenWeatherMap API Key
+    const city = 'YOUR_CITY_NAME';  // Set the city or use geolocation
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`;
+    
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        // Update the UI with weather data
+        document.getElementById('weather-temp').innerText = `${data.main.temp} °C`;
+        document.getElementById('weather-humidity').innerText = `${data.main.humidity} %`;
+        document.getElementById('weather-condition').innerText = data.weather[0].description;
+    } catch (error) {
+        console.error("Error fetching weather data:", error);
+    }
+}
+
+// Fetch weather data when the page loads
+window.addEventListener('load', getWeatherData);
