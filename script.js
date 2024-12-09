@@ -1,123 +1,97 @@
-// Initialize chart variable
-let temperatureChart;
-let lastTimeInMinutes = -1; // Variable to track the last time in minutes
+// Get button and status elements
+const startButton = document.getElementById('start-incubation');
+const stopButton = document.getElementById('stop-incubation');
+const incubatorState = document.getElementById('incubator-state');
+const statusMessage = document.getElementById('status-message');
 
-// Function to fetch temperature and humidity data from Netlify function
-async function getTemperatureData() {
-    try {
-        const response = await fetch('/.netlify/functions/temperature');
-        const data = await response.json();
-
-        // Update the temperature and humidity in the Status Modal
-        document.getElementById('temperature').innerText = `${data.temperature} °C`;
-        document.getElementById('humidity').innerText = `${data.humidity} %`;
-
-        // Update the chart data (ensuring updates only happen every 5 minutes)
-        updateChart(data.temperature, data.humidity);
-    } catch (error) {
-        console.error("Error fetching data:", error);
-    }
-}
-
-// Function to initialize the chart
-function initializeChart() {
-    const ctx = document.getElementById('temperatureChart').getContext('2d');
-    temperatureChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: [],  // Empty initially, will be filled dynamically
-            datasets: [
-                {
-                    label: 'Temperature (°C)',
-                    borderColor: 'rgb(255, 99, 132)',
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    data: [],  // Empty initially, will be filled dynamically
-                    fill: false,
-                    tension: 0.1
-                },
-                {
-                    label: 'Humidity (%)',
-                    borderColor: 'rgb(54, 162, 235)',
-                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                    data: [],  // Empty initially, will be filled dynamically
-                    fill: false,
-                    tension: 0.1
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                title: {
-                    display: true,
-                    text: 'Temperature and Humidity over Time'
-                },
-                tooltip: {
-                    mode: 'index',
-                    intersect: false
-                }
-            },
-            interaction: {
-                mode: 'nearest',
-                intersect: false
-            },
-            scales: {
-                x: {
-                    type: 'linear',
-                    position: 'bottom',
-                    title: {
-                        display: true,
-                        text: 'Time (Minutes)'
-                    },
-                    ticks: {
-                        stepSize: 5, // Set step size for 5-minute intervals
-                    }
-                },
-                y: {
-                    title: {
-                        display: true,
-                        text: 'Value'
-                    }
-                }
-            }
-        }
-    });
-}
-
-// Function to update the chart with new data
-function updateChart(temperature, humidity) {
-    const currentTime = Date.now();  // Get the current timestamp
-    const timeInMinutes = Math.floor(currentTime / 60000);  // Convert to minutes
-
-    // Only update the chart every 5 minutes (if timeInMinutes is a multiple of 5 and different from lastTimeInMinutes)
-    if (timeInMinutes % 5 === 0 && timeInMinutes !== lastTimeInMinutes) {
-        lastTimeInMinutes = timeInMinutes;
-
-        // Add new data point to the chart (up to 50 data points)
-        if (temperatureChart.data.labels.length > 50) {
-            temperatureChart.data.labels.shift();
-            temperatureChart.data.datasets[0].data.shift();
-            temperatureChart.data.datasets[1].data.shift();
-        }
-
-        temperatureChart.data.labels.push(timeInMinutes);
-        temperatureChart.data.datasets[0].data.push(temperature);
-        temperatureChart.data.datasets[1].data.push(humidity);
-
-        // Update the chart with the new data
-        temperatureChart.update();
-    }
-}
-
-// Add an event listener to update temperature data when the Status Modal opens
-document.getElementById('statusModal').addEventListener('show.bs.modal', function () {
-    getTemperatureData();
+// Add event listeners for Start and Stop buttons
+startButton.addEventListener('click', () => {
+    incubatorState.textContent = 'Running';
+    incubatorState.style.color = 'green'; // Update color to green
+    statusMessage.textContent = 'Status: Incubation is running.';
+    statusMessage.style.color = 'green';
 });
 
-// Update temperature data every 5 seconds (this fetches data but chart updates only every 5 minutes)
-setInterval(getTemperatureData, 5000);
+stopButton.addEventListener('click', () => {
+    incubatorState.textContent = 'Stopped';
+    incubatorState.style.color = 'red'; // Update color to red
+    statusMessage.textContent = 'Status: Incubation is stopped.';
+    statusMessage.style.color = 'red';
+});
+document.getElementById("save-settings").addEventListener("click", () => {
+    // Get input values
+    const temperatureInput = document.getElementById("temperature-input").value;
+    const humidityInput = document.getElementById("humidity-input").value;
 
-// Initialize the chart on page load
-window.onload = function () {
-    initializeChart();
+    // Validate inputs
+    if (!temperatureInput || !humidityInput) {
+        alert("Please enter valid temperature and humidity values.");
+        return;
+    }
+
+    // Update status section
+    document.getElementById("temperature").textContent = `${temperatureInput} °C`;
+    document.getElementById("humidity").textContent = `${humidityInput} %`;
+
+    // Update logs table
+    const logTableBody = document.getElementById("log-table-body");
+
+    // Get current timestamp
+    const timestamp = new Date().toLocaleString();
+
+    // Create a new row
+    const newRow = document.createElement("tr");
+    newRow.innerHTML = `
+        <td>${timestamp}</td>
+        <td>${temperatureInput} °C</td>
+        <td>${humidityInput} %</td>
+        <td>Settings Updated</td>
+    `;
+
+    // Add the new row to the table
+    logTableBody.appendChild(newRow);
+
+    // Clear the "No logs available" message if it exists
+    const noLogsMessage = logTableBody.querySelector("tr td[colspan='4']");
+    if (noLogsMessage) {
+        noLogsMessage.parentElement.removeChild(noLogsMessage);
+    }
+
+    // Close the modal (optional)
+    const settingsModal = new bootstrap.Modal(document.getElementById("settingsModal"));
+    settingsModal.hide();
+
+    alert("Settings updated successfully and logged.");
+});
+// Triggering the chick hatching notification modal
+function showChickHatchNotification() {
+    const myModal = new bootstrap.Modal(document.getElementById('chickHatchModal'));
+    myModal.show();
 }
+
+// Simulating a chick hatching detection event (for testing purposes)
+setTimeout(() => {
+    showChickHatchNotification();
+}, 5000);  // Modal will appear 5 seconds after the page loads (for demo)
+// Connect to WebSocket server running on 127.0.0.1:8080
+const socket = new WebSocket('ws://127.0.0.1:8080');
+
+// When the WebSocket is open (connected), log it to the console
+socket.onopen = () => {
+  console.log('Connected to WebSocket server');
+};
+
+// When the WebSocket receives a message (from Node.js server via MQTT), handle it
+socket.onmessage = (event) => {
+  const data = event.data;  // The data received from the WebSocket
+  console.log('Received data:', data);
+
+  // Update your frontend with the received data (e.g., temperature)
+  document.getElementById('temperature').textContent = `Temperature: ${data} °C`;
+};
+
+// Handle WebSocket errors
+socket.onerror = (error) => {
+  console.error('WebSocket error:', error);
+};
+
