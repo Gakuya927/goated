@@ -1,6 +1,6 @@
 /* General Body Styling */
 body {
-    background-image: url('pexels-pixabay-5143.jpg'); /* Replace with the actual file path */
+    background-image: url('C:/incubators/pexels-pixabay-5143.jpg'); /* Replace with the actual file path */
     background-size: cover; /* Make the image cover the entire background */
     background-position: center; /* Center the image */
     background-repeat: no-repeat; /* Prevent tiling */
@@ -124,36 +124,4 @@ footer {
         font-size: 0.9rem;
         padding: 8px 16px;
     }
-}
-.floating-help {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    background: #8B4513; /* Brownish color */
-    border-radius: 50px;
-    padding: 10px 15px;
-    color: white;
-    font-size: 1.2rem;
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s, box-shadow 0.3s ease-in-out;
-    cursor: pointer;
-}
-
-.floating-help:hover {
-    transform: scale(1.1);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-    background: #A0522D; /* Slightly lighter brown for hover effect */
-}
-
-.floating-help i {
-    margin-right: 8px; /* Spacing between the icon and text */
-    font-size: 1.5rem;
-}
-
-.help-text {
-    font-size: 1rem;
-    font-weight: bold;
 }
